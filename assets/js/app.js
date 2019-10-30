@@ -40,6 +40,11 @@
       "</ul>";
   }
 
+  function insertError(error) {
+    app.innerHTML = "<p>Sorry, there was a problem getting today's stories!</p>";
+    app.innerHTML += "<p>Please try again later.</p>"
+  }
+
   /**
    * Init
    */
@@ -47,6 +52,7 @@
   fetch(endpoint)
     .then(getJSON)
     .then(getStories)
-    .then(insertHTML);
+    .then(insertHTML)
+    .catch(insertError);
 
 })(document);
