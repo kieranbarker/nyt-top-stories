@@ -11,6 +11,18 @@
    * Functions
    */
 
+  /**
+   * Sanitize and encode all HTML in a user-submitted string
+   * (c) 2018 Chris Ferdinandi, MIT License, https://gomakethings.com
+   * @param  {String} str  The user-submitted string
+   * @return {String} str  The sanitized string
+   */
+  function sanitizeHTML(str) {
+    var temp = document.createElement("div");
+    temp.textContent = str;
+    return temp.innerHTML;
+  }
+
   function getJSON(response) {
     return (response.ok) ? response.json() : Promise.reject(response);
   }
@@ -24,10 +36,16 @@
       "<li class='mb4 athelas'>" +
         "<article>" +
           "<h2 class='lh-title measure f4 f3-m f3-l'>" +
-            "<a href='" + story.url + "'>" + story.title + "</a>" +
+            "<a href='" + sanitizeHTML(story.url) + "'>" +
+              sanitizeHTML(story.title) +
+            "</a>" +
           "</h2>" +
-          "<p class='lh-copy measure'>" + story.byline + "</p>" +
-          "<p class='lh-copy measure'>" + story.abstract + "</p>" +
+          "<p class='lh-copy measure'>" +
+            sanitizeHTML(story.byline) +
+          "</p>" +
+          "<p class='lh-copy measure'>" +
+            sanitizeHTML(story.abstract) +
+          "</p>" +
         "</article>" +
       "</li>"
     );
