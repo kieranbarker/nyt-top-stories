@@ -1,6 +1,6 @@
 # NYT Top Stories
 
-Gets the top stories of the day from [The New York Times](https://www.nytimes.com/).
+Today's top stories from [The New York Times](https://www.nytimes.com/).
 
 My fourth project as part of the [Vanilla JS Academy](https://vanillajsacademy.com/) 😊
 
