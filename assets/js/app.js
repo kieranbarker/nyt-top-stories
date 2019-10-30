@@ -1,5 +1,7 @@
 ;(function(d) {
 
+  "use strict";
+
   /**
    * Variables
    */
