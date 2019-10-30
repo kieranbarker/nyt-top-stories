@@ -60,7 +60,7 @@
 
   function insertError(error) {
     app.innerHTML = "<p>Sorry, there was a problem getting today's stories!</p>";
-    app.innerHTML += "<p>Please try again later.</p>"
+    app.innerHTML += "<p>Please try again later.</p>";
   }
 
   /**
