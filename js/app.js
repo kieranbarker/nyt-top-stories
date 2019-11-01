@@ -86,7 +86,6 @@
     fetch(endpoint + category + ".json?api-key=" + apiKey)
       .then(getJSON)
       .then(function(data) {
-        console.log(typeof data);
         render(data.results, category);
       })
       .catch(insertError);
