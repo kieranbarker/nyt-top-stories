@@ -37,11 +37,13 @@
     return (
       "<li class='mb4 athelas'>" +
         "<article>" +
-          "<h2 class='lh-title measure f4 f3-m f3-l'>" +
-            "<a href='" + sanitizeHTML(story.url) + "'>" +
-              sanitizeHTML(story.title) +
-            "</a>" +
-          "</h2>" +
+          "<header>" +
+            "<h2 class='lh-title measure f4 f3-m f3-l'>" +
+              "<a href='" + sanitizeHTML(story.url) + "'>" +
+                sanitizeHTML(story.title) +
+              "</a>" +
+            "</h2>" +
+          "</header>" +
           "<p class='lh-copy measure'>" +
             sanitizeHTML(story.byline) +
           "</p>" +
