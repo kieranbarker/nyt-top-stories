@@ -35,31 +35,26 @@
 
   function buildListItem(story) {
     return (
-      "<li class='mb4 athelas'>" +
-        "<article>" +
-          "<header>" +
-            "<h2 class='lh-title measure f4 f3-m f3-l'>" +
-              "<a href='" + sanitizeHTML(story.url) + "'>" +
-                sanitizeHTML(story.title) +
-              "</a>" +
-            "</h2>" +
-          "</header>" +
-          "<p class='lh-copy measure'>" +
-            sanitizeHTML(story.byline) +
-          "</p>" +
-          "<p class='lh-copy measure'>" +
-            sanitizeHTML(story.abstract) +
-          "</p>" +
-        "</article>" +
-      "</li>"
+      "<article class='mb4 athelas'>" +
+        "<header>" +
+          "<h2 class='lh-title measure f4 f3-m f3-l'>" +
+            "<a href='" + sanitizeHTML(story.url) + "'>" +
+              sanitizeHTML(story.title) +
+            "</a>" +
+          "</h2>" +
+        "</header>" +
+        "<p class='lh-copy measure'>" +
+          sanitizeHTML(story.byline) +
+        "</p>" +
+        "<p class='lh-copy measure'>" +
+          sanitizeHTML(story.abstract) +
+        "</p>" +
+      "</article>"
     );
   }
 
   function insertHTML(stories) {
-    app.innerHTML =
-      "<ul class='list ph0'>" +
-        stories.map(buildListItem).join("") +
-      "</ul>";
+    app.innerHTML = stories.map(buildListItem).join("");
   }
 
   function insertError(error) {
