@@ -24,7 +24,7 @@
    * @return {String}      The sanitized string
    */
   function sanitizeHTML(str) {
-    var temp = document.createElement("div");
+    var temp = d.createElement("div");
     temp.textContent = str;
     return temp.innerHTML;
   }
