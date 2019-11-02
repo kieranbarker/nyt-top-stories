@@ -1,11 +1,11 @@
 var gulp   = require("gulp"),
-    uglify = require("gulp-uglify"),
+    terser = require("gulp-terser"),
     rename = require("gulp-rename");
  
 function minify() {
   return gulp.src("./js/app.js")
     .pipe(rename("app.min.js"))
-    .pipe(uglify())
+    .pipe(terser())
     .pipe(gulp.dest("./js"));
 }
 
