@@ -1,6 +1,6 @@
-var gulp = require("gulp");
-var uglify = require("gulp-uglify");
-var rename = require("gulp-rename");
+var gulp   = require("gulp"),
+    uglify = require("gulp-uglify"),
+    rename = require("gulp-rename");
  
 function minify() {
   return gulp.src("./js/app.js")
