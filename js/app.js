@@ -53,9 +53,11 @@
             "</a>" +
           "</h3>" +
         "</header>" +
-        "<p class='lh-copy measure'>" +
-          sanitizeHTML(story.byline) +
-        "</p>" +
+        "<address>" +
+          "<p class='lh-copy measure'>" +
+            sanitizeHTML(story.byline) +
+          "</p>" +
+        "</address>" +
         "<p class='lh-copy measure'>" +
           sanitizeHTML(story.abstract) +
         "</p>" +
