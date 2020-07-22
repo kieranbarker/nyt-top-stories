@@ -64,7 +64,7 @@
   function buildCategory (stories, category) {
 
     return (
-      "<h2 class='category'>" + category + "</h2>" +
+      "<h2>" + category + "</h2>" +
       stories.slice(0, 3).map(buildStory).join("")
     );
 
