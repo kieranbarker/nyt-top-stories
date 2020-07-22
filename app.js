@@ -38,7 +38,6 @@
   function buildStory (story) {
 
     return (
-
       "<article>" +
         "<header>" +
           "<h3>" +
@@ -53,7 +52,6 @@
         "</header>" +
         "<p>" + story.abstract + "</p>" +
       "</article>"
-
     );
 
   }
@@ -66,10 +64,8 @@
   function buildCategory (stories, category) {
 
     return (
-
       "<h2 class='category'>" + category + "</h2>" +
       stories.slice(0, 3).map(buildStory).join("")
-
     );
 
   }
@@ -82,13 +78,11 @@
   function fetchCategory (category) {
 
     return (
-
       fetch(endpoint + category + ".json?api-key=" + apiKey)
         .then(getJSON)
         .then(function (data) {
           return buildCategory(data.results, category);
         })
-
     );
 
   }
@@ -107,11 +101,9 @@
   function showError () {
 
     main.innerHTML = (
-
       "<p>" +
         "<strong>Sorry, there seems to be a problem. You can still view today's top stories on the <i>New York Times</i> website using the links above.</strong>" +
       "</p>"
-
     );
 
   }
