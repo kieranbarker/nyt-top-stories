@@ -1,116 +1,136 @@
-;(function(d) {
+//
+// Variables
+//
 
-  "use strict";
+// The element to contain the stories
+var main = document.querySelector("main");
 
-  /**
-   * Variables
-   */
+// The endpoint and API key
+var endpoint = "https://api.nytimes.com/svc/topstories/v2/";
+var apiKey = "JraYD8iHz930GynlEnoalaAfNhBkCyUB";
 
-  var endpoint = "https://api.nytimes.com/svc/topstories/v2/";
-  var apiKey = "JraYD8iHz930GynlEnoalaAfNhBkCyUB";
-  var categories = [ "movies", "science", "technology" ];
-  var app = d.querySelector("#app");
+// The categories to fetch
+var categories = [ "food", "movies", "technology" ];
 
+//
+// Functions
+//
 
+/**
+ * Get the JSON data from a Fetch request
+ * @param   {Object} response The response to the Fetch request
+ * @returns {Object}          The JSON data OR a rejected promise
+ */
+function getJSON (response) {
+  return response.ok ? response.json() : Promise.reject(response);
+}
 
-  /**
-   * Functions
-   */
+/**
+ * Build the HTML string for a single story
+ * @param   {Object} story The object returned by the API
+ * @returns {String}       An HTML string
+ */
+function buildStory (story) {
 
-  /**
-   * Sanitize and encode all HTML in a user-submitted string
-   * (c) 2018 Chris Ferdinandi, MIT License, https://gomakethings.com
-   * @param  {String} str  The user-submitted string
-   * @return {String}      The sanitized string
-   */
-  function sanitizeHTML(str) {
-    var temp = d.createElement("div");
-    temp.textContent = str;
-    return temp.innerHTML;
-  }
+  return (
 
-  /**
-   * Get the JSON from a fetch request
-   * @param  {Object} response The response from the fetch request
-   * @return {Object}          The parsed JSON object
-   */
-  function getJSON(response) {
-    return (response.ok) ? response.json() : Promise.reject(response);
-  }
-
-  /**
-   * Build the HTML for an article
-   * @param  {Object} story The object representing the current article
-   * @return {String}       An HTML string for the article
-   */
-  function buildArticle(story) {
-    return (
-      "<article class='mb4 georgia'>" +
-        "<header>" +
-          "<h3 class='lh-title measure'>" +
-            "<a href='" + sanitizeHTML(story.url) + "'>" +
-              sanitizeHTML(story.title) +
-            "</a>" +
-          "</h3>" +
-        "</header>" +
-        "<address>" +
-          "<p class='lh-copy measure'>" +
-            sanitizeHTML(story.byline) +
-          "</p>" +
-        "</address>" +
-        "<p class='lh-copy measure'>" +
-          sanitizeHTML(story.abstract) +
+    "<article>" +
+      "<header>" +
+        "<h3>" +
+          "<a href='" + story.url + "'>" + story.title + "</a>" +
+        "</h3>" +
+        "<p>" +
+          "<b>Last updated: </b>" +
+          "<time datetime='" + story.updated_date + "'>" +
+            new Date(story.updated_date).toLocaleString() +
+          "</time>" +
         "</p>" +
-      "</article>"
-    );
-  }
+      "</header>" +
+      "<p>" + story.abstract + "</p>" +
+    "</article>"
 
-  /**
-   * Insert the HTML for all articles of a specific category into the DOM
-   * @param {Array}  articles An array of objects for each article
-   * @param {String} category The category to use
-   */
-  function render(articles, category) {
-    app.innerHTML +=
-      "<section>" +
-        "<header>" +
-          "<h2 class='lh-title measure ttc'>" + category + "</h2>" +
-        "</header>" +
-        articles.slice(0, 3).map(buildArticle).join("") +
-      "</section>";
-  }
+  );
 
-  /**
-   * Fetch the articles for a category and insert them into the DOM
-   * @param {String} category The category to use
-   */
-  function fetchArticles(category) {
+}
+
+/**
+ * Build the HTML string for a single category
+ * @param   {Array} stories An array of story objects
+ * @returns {String}        An HTML string
+ */
+function buildCategory (stories, category) {
+
+  return (
+
+    "<h2 class='category'>" + category + "</h2>" +
+    stories.slice(0, 3).map(buildStory).join("")
+
+  );
+
+}
+
+/**
+ * Return a Fetch request for the given category
+ * @param   {String} category The category to use
+ * @returns {String}          An HTML string
+ */
+function fetchCategory (category) {
+
+  return (
+
     fetch(endpoint + category + ".json?api-key=" + apiKey)
       .then(getJSON)
-      .then(function(data) {
-        render(data.results, category);
+      .then(function (data) {
+        return buildCategory(data.results, category);
       })
-      .catch(insertError);
-  }
 
-  /**
-   * Insert an error message into the DOM
-   */
-  function insertError() {
-    app.innerHTML = "<p>Sorry, there was a problem getting today's stories!</p>";
-    app.innerHTML += "<p>Please try again later.</p>";
-  }
+  );
+
+}
+
+/**
+ * Join the category strings and add them to the DOM
+ * @param {Array} categories The array of category strings
+ */
+function showCategories (categories) {
+  main.innerHTML = categories.join("");
+}
+
+/**
+ * Add an error message to the DOM
+ */
+function showError () {
+
+  main.innerHTML = (
+
+    "<p>" +
+      "<strong>Sorry, there seems to be a problem. You can still view today's top stories on the <i>New York Times</i> website using the links above.</strong>" +
+    "</p>"
+
+  );
+
+}
+
+/**
+ * Add all stories from all categories to the DOM
+ */
+function getStories () {
+
+  // Create an array of Fetch requests for the categories
+  var requests = categories.map(fetchCategory);
+
+  // This will resolve once ALL the requests have resolved
+  var categoryStrings = Promise.all(requests);
+
+  // Join the resolved array and add it to the DOM
+  categoryStrings.then(showCategories).catch(showError);
+
+}
 
 
+//
+// Inits & Event Listeners
+//
 
-  /**
-   * Init
-   */
-
-  // Remove the link to The New York Times
-  app.innerHTML = "";
-
-  // Insert the content from the API
-  categories.forEach(fetchArticles);
-
-})(document);
+// Add all stories from all categories to the DOM
+getStories();
