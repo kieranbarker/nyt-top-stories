@@ -1,136 +1,143 @@
-//
-// Variables
-//
+;(function () {
 
-// The element to contain the stories
-var main = document.querySelector("main");
+  // Opt into ES5 strict mode
+  "use strict";
 
-// The endpoint and API key
-var endpoint = "https://api.nytimes.com/svc/topstories/v2/";
-var apiKey = "JraYD8iHz930GynlEnoalaAfNhBkCyUB";
+  //
+  // Variables
+  //
 
-// The categories to fetch
-var categories = [ "food", "movies", "technology" ];
+  // The element to contain the stories
+  var main = document.querySelector("main");
 
-//
-// Functions
-//
+  // The endpoint and API key
+  var endpoint = "https://api.nytimes.com/svc/topstories/v2/";
+  var apiKey = "JraYD8iHz930GynlEnoalaAfNhBkCyUB";
 
-/**
- * Get the JSON data from a Fetch request
- * @param   {Object} response The response to the Fetch request
- * @returns {Object}          The JSON data OR a rejected promise
- */
-function getJSON (response) {
-  return response.ok ? response.json() : Promise.reject(response);
-}
+  // The categories to fetch
+  var categories = [ "food", "movies", "technology" ];
 
-/**
- * Build the HTML string for a single story
- * @param   {Object} story The object returned by the API
- * @returns {String}       An HTML string
- */
-function buildStory (story) {
+  //
+  // Functions
+  //
 
-  return (
+  /**
+   * Get the JSON data from a Fetch request
+   * @param   {Object} response The response to the Fetch request
+   * @returns {Object}          The JSON data OR a rejected promise
+   */
+  function getJSON (response) {
+    return response.ok ? response.json() : Promise.reject(response);
+  }
 
-    "<article>" +
-      "<header>" +
-        "<h3>" +
-          "<a href='" + story.url + "'>" + story.title + "</a>" +
-        "</h3>" +
-        "<p>" +
-          "<b>Last updated: </b>" +
-          "<time datetime='" + story.updated_date + "'>" +
-            new Date(story.updated_date).toLocaleString() +
-          "</time>" +
-        "</p>" +
-      "</header>" +
-      "<p>" + story.abstract + "</p>" +
-    "</article>"
+  /**
+   * Build the HTML string for a single story
+   * @param   {Object} story The object returned by the API
+   * @returns {String}       An HTML string
+   */
+  function buildStory (story) {
 
-  );
+    return (
 
-}
+      "<article>" +
+        "<header>" +
+          "<h3>" +
+            "<a href='" + story.url + "'>" + story.title + "</a>" +
+          "</h3>" +
+          "<p>" +
+            "<b>Last updated: </b>" +
+            "<time datetime='" + story.updated_date + "'>" +
+              new Date(story.updated_date).toLocaleString() +
+            "</time>" +
+          "</p>" +
+        "</header>" +
+        "<p>" + story.abstract + "</p>" +
+      "</article>"
 
-/**
- * Build the HTML string for a single category
- * @param   {Array} stories An array of story objects
- * @returns {String}        An HTML string
- */
-function buildCategory (stories, category) {
+    );
 
-  return (
+  }
 
-    "<h2 class='category'>" + category + "</h2>" +
-    stories.slice(0, 3).map(buildStory).join("")
+  /**
+   * Build the HTML string for a single category
+   * @param   {Array} stories An array of story objects
+   * @returns {String}        An HTML string
+   */
+  function buildCategory (stories, category) {
 
-  );
+    return (
 
-}
+      "<h2 class='category'>" + category + "</h2>" +
+      stories.slice(0, 3).map(buildStory).join("")
 
-/**
- * Return a Fetch request for the given category
- * @param   {String} category The category to use
- * @returns {String}          An HTML string
- */
-function fetchCategory (category) {
+    );
 
-  return (
+  }
 
-    fetch(endpoint + category + ".json?api-key=" + apiKey)
-      .then(getJSON)
-      .then(function (data) {
-        return buildCategory(data.results, category);
-      })
+  /**
+   * Return a Fetch request for the given category
+   * @param   {String} category The category to use
+   * @returns {String}          An HTML string
+   */
+  function fetchCategory (category) {
 
-  );
+    return (
 
-}
+      fetch(endpoint + category + ".json?api-key=" + apiKey)
+        .then(getJSON)
+        .then(function (data) {
+          return buildCategory(data.results, category);
+        })
 
-/**
- * Join the category strings and add them to the DOM
- * @param {Array} categories The array of category strings
- */
-function showCategories (categories) {
-  main.innerHTML = categories.join("");
-}
+    );
 
-/**
- * Add an error message to the DOM
- */
-function showError () {
+  }
 
-  main.innerHTML = (
+  /**
+   * Join the category strings and add them to the DOM
+   * @param {Array} categories The array of category strings
+   */
+  function showCategories (categories) {
+    main.innerHTML = categories.join("");
+  }
 
-    "<p>" +
-      "<strong>Sorry, there seems to be a problem. You can still view today's top stories on the <i>New York Times</i> website using the links above.</strong>" +
-    "</p>"
+  /**
+   * Add an error message to the DOM
+   */
+  function showError () {
 
-  );
+    main.innerHTML = (
 
-}
+      "<p>" +
+        "<strong>Sorry, there seems to be a problem. You can still view today's top stories on the <i>New York Times</i> website using the links above.</strong>" +
+      "</p>"
 
-/**
- * Add all stories from all categories to the DOM
- */
-function getStories () {
+    );
 
-  // Create an array of Fetch requests for the categories
-  var requests = categories.map(fetchCategory);
+  }
 
-  // This will resolve once ALL the requests have resolved
-  var categoryStrings = Promise.all(requests);
+  /**
+   * Add all stories from all categories to the DOM
+   */
+  function getStories () {
 
-  // Join the resolved array and add it to the DOM
-  categoryStrings.then(showCategories).catch(showError);
+    // Create an array of Fetch requests for the categories
+    var requests = categories.map(fetchCategory);
 
-}
+    // This will resolve once ALL the requests have resolved
+    var categoryStrings = Promise.all(requests);
+
+    // Join the resolved array and add it to the DOM
+    categoryStrings.then(showCategories).catch(showError);
+
+  }
 
 
-//
-// Inits & Event Listeners
-//
+  //
+  // Inits & Event Listeners
+  //
 
-// Add all stories from all categories to the DOM
-getStories();
+  // Add all stories from all categories to the DOM
+  getStories();
+
+})();
