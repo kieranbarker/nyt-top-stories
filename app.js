@@ -33,8 +33,8 @@
   /**
    * Sanitize and encode all HTML in a user-submitted string
    * (c) 2018 Chris Ferdinandi, MIT License, https://gomakethings.com
-   * @param  {String} str  The user-submitted string
-   * @return {String}      The sanitized string
+   * @param   {String} str The user-submitted string
+   * @returns {String}     The sanitized string
    */
   function sanitizeHTML (str) {
     var temp = document.createElement("div");
