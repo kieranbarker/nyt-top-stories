@@ -31,29 +31,45 @@
   }
 
   /**
+   * Sanitize and encode all HTML in a user-submitted string
+   * (c) 2018 Chris Ferdinandi, MIT License, https://gomakethings.com
+   * @param  {String} str  The user-submitted string
+   * @return {String}      The sanitized string
+   */
+  function sanitizeHTML (str) {
+    var temp = document.createElement("div");
+    temp.textContent = str;
+    return temp.innerHTML;
+  }
+
+  /**
    * Build the HTML string for a single story
    * @param   {Object} story The object returned by the API
    * @returns {String}       An HTML string
    */
   function buildStory (story) {
 
+    // Sanitize the date here for readability
+    var date = sanitizeHTML(story.updated_date);
+  
+    // Return the HTML string
     return (
       "<article>" +
         "<header>" +
           "<h3>" +
-            "<a href='" + story.url + "'>" + story.title + "</a>" +
+            "<a href='" + sanitizeHTML(story.url) + "'>" + sanitizeHTML(story.title) + "</a>" +
           "</h3>" +
           "<p>" +
             "<b>Last updated: </b>" +
-            "<time datetime='" + story.updated_date + "'>" +
-              new Date(story.updated_date).toLocaleString() +
+            "<time datetime='" + date + "'>" +
+              new Date(date).toLocaleString() +
             "</time>" +
           "</p>" +
         "</header>" +
-        "<p>" + story.abstract + "</p>" +
+        "<p>" + sanitizeHTML(story.abstract) + "</p>" +
       "</article>"
     );
-
+  
   }
 
   /**
