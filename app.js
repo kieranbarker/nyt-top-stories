@@ -10,9 +10,8 @@
   // The element to contain the stories
   var main = document.querySelector("main");
 
-  // The endpoint and API key
-  var endpoint = "https://api.nytimes.com/svc/topstories/v2/";
-  var apiKey = "JraYD8iHz930GynlEnoalaAfNhBkCyUB";
+  // The endpoint
+  var endpoint = "https://nyt.kbarker.workers.dev";
 
   // The categories to fetch
   var categories = [ "food", "movies", "technology" ];
@@ -89,12 +88,21 @@
   /**
    * Return a Fetch request for the given category
    * @param   {String} category The category to use
-   * @returns {String}          An HTML string
+   * @returns {Object}          A promise object
    */
   function fetchCategory (category) {
+  
+    // Options for the request
+    var options = {
+      method: "POST",
+      body: {
+        "category": category
+      }
+    };
 
+    // Return a promise for the request
     return (
-      fetch(endpoint + category + ".json?api-key=" + apiKey)
+      fetch(endpoint, options)
         .then(getJSON)
         .then(function (data) {
           return buildCategory(data.results, category);
