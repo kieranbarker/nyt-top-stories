@@ -95,9 +95,7 @@
     // Options for the request
     var options = {
       method: "POST",
-      body: {
-        "category": category
-      }
+      body: JSON.stringify({ category: category })
     };
 
     // Return a promise for the request
