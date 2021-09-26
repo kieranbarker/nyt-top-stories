@@ -1,0 +1,24 @@
+{
+  "name": "nyt-top-stories",
+  "version": "1.0.0",
+  "description": "Use the New York Times API to get and display today's top stories.",
+  "private": true,
+  "browser": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kieranbarker/nyt-top-stories.git"
+  },
+  "keywords": ["Vanilla JS", "Vanilla JS Academy", "New York Times"],
+  "author": "Kieran Barker <kieran@barker.codes> (https://barker.codes)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kieranbarker/nyt-top-stories/issues"
+  },
+  "homepage": "https://github.com/kieranbarker/nyt-top-stories#readme",
+  "devDependencies": {
+    "@types/dompurify": "^2.2.3"
+  }
+}
