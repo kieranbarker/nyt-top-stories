@@ -12,9 +12,10 @@ function getJSON(response) {
   return Promise.reject(error);
 }
 
-function fetchSection(section) {
+async function fetchSection(section) {
   const options = { method: 'POST', body: section };
-  return fetch(api, options).then(getJSON);
+  const response = await fetch(api, options);
+  return getJSON(response);
 }
 
 function getData() {
@@ -22,9 +23,10 @@ function getData() {
   return Promise.allSettled(requests);
 }
 
-function getFulfilled(promises) {
-  const fulfilled = promises.filter(result => result.status === 'fulfilled');
-  return fulfilled.map(result => result.value);
+function getFulfilled(results) {
+  return results
+    .filter(result => result.status === 'fulfilled')
+    .map(result => result.value);
 }
 
 function getStoryHTML({ url, title, abstract }) {
@@ -55,8 +57,8 @@ function insertStories(data) {
   const fulfilled = getFulfilled(data);
 
   if (fulfilled.length < 1) {
-    const rejected = data[0];
-    return Promise.reject(rejected.reason);
+    const { reason } = data[0];
+    return Promise.reject(reason);
   }
 
   const htmlString = fulfilled.map(getSectionHTML).join('');
@@ -67,6 +69,10 @@ function handleError(error) {
   app.textContent = error.toString();
 }
 
-getData()
-  .then(insertStories)
-  .catch(handleError);
+function init() {
+  getData()
+    .then(insertStories)
+    .catch(handleError);
+}
+
+init();

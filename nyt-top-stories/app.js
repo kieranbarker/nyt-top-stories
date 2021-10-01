@@ -4,7 +4,6 @@ const api = 'https://nyt.barker.workers.dev';
 
 const app = document.querySelector('#app');
 
-
 function getJSON(response) {
   if (response.ok) return response.json();
   const error = new Error('Try again later.');
@@ -36,6 +35,10 @@ function handleError(error) {
   app.textContent = error.toString();
 }
 
-getData()
-  .then(insertStories)
-  .catch(handleError);
+function init() {
+  getData()
+    .then(insertStories)
+    .catch(handleError);
+}
+
+init();
