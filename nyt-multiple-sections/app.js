@@ -1,147 +1,77 @@
-// @ts-check
+'use strict';
 
-/** @typedef { import('../types.d').Article } Article */
-/** @typedef { import('../types.d').ArticleList } ArticleList */
+const api = 'https://nyt.barker.workers.dev';
 
-;(function() {
+const sections = [ 'food', 'movies', 'technology' ];
 
-  'use strict';
+const app = document.querySelector('#app');
 
-  //
-  // Variables
-  //
+function getJSON(response) {
+  if (response.ok) return response.json();
+  const error = new Error('Try again later.');
+  return Promise.reject(error);
+}
 
-  // Save the API endpoint
-  const api = 'https://nyt.barker.workers.dev';
+async function fetchSection(section) {
+  const options = { method: 'POST', body: section };
+  const response = await fetch(api, options);
+  return getJSON(response);
+}
 
-  // Save the sections to be fetched
-  const sections = [ 'food', 'movies', 'technology' ];
+function getData() {
+  const requests = sections.map(fetchSection);
+  return Promise.allSettled(requests);
+}
 
-  /** @type {HTMLDivElement} */
-  const app = document.querySelector('#app');
+function getFulfilled(results) {
+  return results
+    .filter(result => result.status === 'fulfilled')
+    .map(result => result.value);
+}
 
+function getStoryHTML({ url, title, abstract }) {
+  return `
+    <article>
+      <header>
+        <h3>
+          <a href="${url}">${title}</a>
+        </h3>
+      </header>
+      <p>${abstract}</p>
+    </article>
+  `;
+}
 
-  //
-  // Functions
-  //
+function getSectionHTML({ section, results }) {
+  return `
+    <article>
+      <header>
+        <h2>${section}</h2>
+      </header>
+      ${results.slice(0, 3).map(getStoryHTML).join('')}
+    </article>
+  `;
+}
 
-  /**
-   * Get the JSON data from a Fetch request
-   * @param {Response} response The Response object
-   * @returns {Promise<any>} The JSON data or an Error object
-   */
-  function getJSON(response) {
-    // If the response was OK, return the JSON data
-    if (response.ok) return response.json();
+function insertStories(data) {
+  const fulfilled = getFulfilled(data);
 
-    // Otherwise, return an Error object
-    const error = new Error('Try again later.');
-    return Promise.reject(error);
+  if (fulfilled.length < 1) {
+    const { reason } = data[0];
+    return Promise.reject(reason);
   }
 
-  /**
-   * Get the JSON data for a single section
-   * @param {string} section The section to fetch
-   * @returns {Promise<ArticleList|Error>} The JSON data or an Error object
-   */
-  function fetchSection(section) {
-    const options = { method: 'POST', body: section };
-    return fetch(api, options).then(getJSON);
-  }
+  app.innerHTML = fulfilled.map(getSectionHTML).join('');
+}
 
-  /**
-   * Get the JSON data for all sections
-   * @returns {Promise<PromiseSettledResult<ArticleList>[]>}
-   */
-  function getData() {
-    const requests = sections.map(fetchSection);
-    // @ts-ignore
-    return Promise.allSettled(requests);
-  }
+function handleError(error) {
+  app.textContent = error.toString();
+}
 
-  /**
-   * Filter the fulfilled promises
-   * @param {PromiseSettledResult<ArticleList>[]} promises The settled promises
-   * @returns {ArticleList[]} The fulfilled promises
-   */
-  function getFulfilled(promises) {
-    /** @type {PromiseFulfilledResult<ArticleList>[]} */
-    const fulfilled = (
-      promises.filter(result => result.status === 'fulfilled')
-    );
-    return fulfilled.map(result => result.value);
-  }
-
-  /**
-   * Get the HTML string for a story
-   * @param {Article} story A story from The New York Times
-   * @returns {string} An HTML string
-   */
-  function getStoryHTML({ url, title, abstract }) {
-    return `
-      <article>
-        <header>
-          <h3>
-            <a href="${url}">${title}</a>
-          </h3>
-        </header>
-        <p>${abstract}</p>
-      </article>
-    `;
-  }
-
-  /**
-   * Get the HTML string for a section of stories
-   * @param {ArticleList} stories A list of stories from The New York Times
-   * @returns {string} An HTML string
-   */
-  function getSectionHTML({ section, results }) {
-    return `
-      <article>
-        <header>
-          <h2>${section}</h2>
-        </header>
-        ${results.slice(0, 3).map(getStoryHTML).join('')}
-      </article>
-    `;
-  }
-
-  /**
-   * Insert the stories into the DOM
-   * @param {PromiseSettledResult<ArticleList>[]} data The API data
-   * @returns {Promise<Error>} An Error object
-   */
-  function insertStories(data) {
-    // Filter the fulfilled promises
-    const fulfilled = getFulfilled(data);
-
-    // If there are none, reject with an error
-    if (fulfilled.length < 1) {
-      /** @type {PromiseRejectedResult} */
-      const rejected = (data[0]);
-      return Promise.reject(rejected.reason);
-    }
-
-    // Otherwise, insert the stories into the DOM
-    app.innerHTML = fulfilled.map(getSectionHTML).join('');
-  }
-
-  /**
-   * Handle errors
-   * @param {Error} error An Error object
-   */
-  function handleError(error) {
-    app.textContent = error.toString();
-  }
-
-
-  //
-  // Inits & Event Listeners
-  //
-
-  // Fetch the stories and insert them into the DOM
+function init() {
   getData()
     .then(insertStories)
     .catch(handleError);
+}
 
-})();
+init();
