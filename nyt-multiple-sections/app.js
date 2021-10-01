@@ -1,8 +1,3 @@
-// @ts-check
-
-/** @typedef { import('../types.d').Article } Article */
-/** @typedef { import('../types.d').ArticleList } ArticleList */
-
 ;(function() {
 
   'use strict';
@@ -17,7 +12,6 @@
   // Save the sections to be fetched
   const sections = [ 'food', 'movies', 'technology' ];
 
-  /** @type {HTMLDivElement} */
   const app = document.querySelector('#app');
 
 
@@ -42,7 +36,7 @@
   /**
    * Get the JSON data for a single section
    * @param {string} section The section to fetch
-   * @returns {Promise<ArticleList|Error>} The JSON data or an Error object
+   * @returns {Promise<any>} The JSON data or an Error object
    */
   function fetchSection(section) {
     const options = { method: 'POST', body: section };
@@ -51,30 +45,26 @@
 
   /**
    * Get the JSON data for all sections
-   * @returns {Promise<PromiseSettledResult<ArticleList>[]>}
+   * @returns {Promise<PromiseSettledResult<any>[]>}
    */
   function getData() {
     const requests = sections.map(fetchSection);
-    // @ts-ignore
     return Promise.allSettled(requests);
   }
 
   /**
    * Filter the fulfilled promises
-   * @param {PromiseSettledResult<ArticleList>[]} promises The settled promises
-   * @returns {ArticleList[]} The fulfilled promises
+   * @param {PromiseSettledResult<any>[]} promises The settled promises
+   * @returns {any[]} The fulfilled promises
    */
   function getFulfilled(promises) {
-    /** @type {PromiseFulfilledResult<ArticleList>[]} */
-    const fulfilled = (
-      promises.filter(result => result.status === 'fulfilled')
-    );
+    const fulfilled = promises.filter(result => result.status === 'fulfilled');
     return fulfilled.map(result => result.value);
   }
 
   /**
    * Get the HTML string for a story
-   * @param {Article} story A story from The New York Times
+   * @param {any} story A story from The New York Times
    * @returns {string} An HTML string
    */
   function getStoryHTML({ url, title, abstract }) {
@@ -92,7 +82,7 @@
 
   /**
    * Get the HTML string for a section of stories
-   * @param {ArticleList} stories A list of stories from The New York Times
+   * @param {any} stories A list of stories from The New York Times
    * @returns {string} An HTML string
    */
   function getSectionHTML({ section, results }) {
@@ -108,8 +98,8 @@
 
   /**
    * Insert the stories into the DOM
-   * @param {PromiseSettledResult<ArticleList>[]} data The API data
-   * @returns {Promise<Error>} An Error object
+   * @param {PromiseSettledResult<any>[]} data The API data
+   * @returns {Promise<never>} An Error object
    */
   function insertStories(data) {
     // Filter the fulfilled promises
@@ -117,8 +107,7 @@
 
     // If there are none, reject with an error
     if (fulfilled.length < 1) {
-      /** @type {PromiseRejectedResult} */
-      const rejected = (data[0]);
+      const rejected = data[0];
       return Promise.reject(rejected.reason);
     }
 
